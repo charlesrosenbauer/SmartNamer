@@ -21,6 +21,9 @@ executable main
       , filepath >= 1.4
       , hashable >= 1.2.6.1
       , parallel >= 3.2.1.1
+      , regex-base >= 0.93.2
+      , regex-posix >= 0.95.2
     other-modules:
         BitVector
+        FileManager
 
