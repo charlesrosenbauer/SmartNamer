@@ -1,4 +1,4 @@
-#SmartNamer
+# SmartNamer
 
 A Simple Command Line Tool For Name Suggestions
 
