@@ -18,4 +18,4 @@ Maybe you've heard the saying "There's only two hard things in computer science;
 
 **Can I Help?**
 
-If you know Haskell, sure! Contact me if you want info on what you can help with.
+If you know Golang, sure! Contact me if you want info on what you can help with.
