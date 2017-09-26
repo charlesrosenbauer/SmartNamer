@@ -2,7 +2,9 @@ package main
 
 
 
-import "fmt"
+import (
+    "fmt"
+  )
 
 
 
@@ -10,5 +12,8 @@ import "fmt"
 
 
 func main() {
-  fmt.Println("Hello World!")
+  s := "Hello World!"
+  vect := representID(s)
+  vect  = representPosition("main.go", 15, vect)
+  fmt.Println(vectToString(vect))
 }

@@ -2,7 +2,12 @@ package main
 
 
 
-//import "math/bits"
+import (
+  "crypto/sha1"
+  "io"
+  "strconv"
+  "math/bits"
+  )
 
 
 
@@ -54,9 +59,9 @@ func fixTo27 (char byte) uint {
 
 func insertIdBit (x, y, z uint, v BitVect) BitVect {
   var pos uint = (x * 729) + (y * 27) + z
-  var a   uint = pos / 64
-  var b   uint = pos % 64
-  v.bits[a] |= (1 >> b)
+  var a   uint = (pos / 64) % 4
+  var b   uint =  pos % 64
+  v.bits[a] |= (1 << b)
   return v
 }
 
@@ -92,6 +97,26 @@ func representID (id string) BitVect {
     vect = insertIdBit(x, y , 26, vect)
     vect = insertIdBit(y, 26, 26, vect)
   }
+  return vect
+}
+
+
+
+
+
+
+
+
+
+
+func representPosition (filename string, pos int, vect BitVect) BitVect {
+  h := sha1.New()
+  io.WriteString(h, filename)
+  io.WriteString(h, strconv.Itoa(pos / 100))
+  bytes := h.Sum(nil)
+  var a uint = uint((bytes[0] / 64) % 4)
+  var b uint = uint( bytes[0] % 64)
+  vect.bits[a + 4] |= (1 << b)
   return vect
 }
 
@@ -168,39 +193,10 @@ func vectInverse (a BitVect) BitVect {
 
 
 
-func OnesCount64 (x uint64) int {
-  /*
-    For some reason golang's new math/bits library's not working.
-    So screw it. I copied the implementation from online and pasted it here.
-    Could probably write a faster version though.
-    This implementation isn't particularly efficient.
-  */
-  const m0 = 0x5555555555555555 // 01010101 ...
-  const m1 = 0x3333333333333333 // 00110011 ...
-  const m2 = 0x0f0f0f0f0f0f0f0f // 00001111 ...
-  const m = 1<<64 - 1
-  x = x>>1&(m0&m) + x&(m0&m)
-  x = x>>2&(m1&m) + x&(m1&m)
-  x = (x>>4 + x) & (m2 & m)
-  x += x >> 8
-  x += x >> 16
-  x += x >> 32
-  return int(x) & (1<<7 - 1)
-}
-
-
-
-
-
-
-
-
-
-
-func vectPopulation (a, b BitVect) int {
+func vectPopulation (a BitVect) int {
   pcnt := 0
   for i := 0; i < 8; i++ {
-    pcnt += OnesCount64(b.bits[i])
+    pcnt += bits.OnesCount64(a.bits[i])
   }
   return pcnt
 }
@@ -216,4 +212,21 @@ func vectPopulation (a, b BitVect) int {
 
 func vectMatch (a, b BitVect) int {
   return vectPopulation(vectIntersection(a, b))
+}
+
+
+
+
+
+
+
+
+
+
+func vectToString (a BitVect) string {
+  str := ""
+  for i:=0; i<8; i++ {
+    str += strconv.FormatUint(a.bits[i], 16) + " "
+  }
+  return str
 }
