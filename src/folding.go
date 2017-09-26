@@ -2,6 +2,14 @@ package main
 
 
 
+//import "math/bits"
+
+
+
+
+
+
+
 
 
 
@@ -85,4 +93,127 @@ func representID (id string) BitVect {
     vect = insertIdBit(y, 26, 26, vect)
   }
   return vect
+}
+
+
+
+
+
+
+
+
+
+
+func vectUnion (a, b BitVect) BitVect {
+  for i := 0; i < 8; i++ {
+    a.bits[i] |= b.bits[i]
+  }
+  return a
+}
+
+
+
+
+
+
+
+
+
+
+func vectIntersection (a, b BitVect) BitVect {
+  for i := 0; i < 8; i++ {
+    a.bits[i] &= b.bits[i]
+  }
+  return a
+}
+
+
+
+
+
+
+
+
+
+
+func vectDifference (a, b BitVect) BitVect {
+  for i := 0; i < 8; i++ {
+    a.bits[i] ^= b.bits[i]
+  }
+  return a
+}
+
+
+
+
+
+
+
+
+
+
+func vectInverse (a BitVect) BitVect {
+  for i := 0; i < 8; i++ {
+    a.bits[i] = ^(a.bits[i])
+  }
+  return a
+}
+
+
+
+
+
+
+
+
+
+
+func OnesCount64 (x uint64) int {
+  /*
+    For some reason golang's new math/bits library's not working.
+    So screw it. I copied the implementation from online and pasted it here.
+    Could probably write a faster version though.
+    This implementation isn't particularly efficient.
+  */
+  const m0 = 0x5555555555555555 // 01010101 ...
+  const m1 = 0x3333333333333333 // 00110011 ...
+  const m2 = 0x0f0f0f0f0f0f0f0f // 00001111 ...
+  const m = 1<<64 - 1
+  x = x>>1&(m0&m) + x&(m0&m)
+  x = x>>2&(m1&m) + x&(m1&m)
+  x = (x>>4 + x) & (m2 & m)
+  x += x >> 8
+  x += x >> 16
+  x += x >> 32
+  return int(x) & (1<<7 - 1)
+}
+
+
+
+
+
+
+
+
+
+
+func vectPopulation (a, b BitVect) int {
+  pcnt := 0
+  for i := 0; i < 8; i++ {
+    pcnt += OnesCount64(b.bits[i])
+  }
+  return pcnt
+}
+
+
+
+
+
+
+
+
+
+
+func vectMatch (a, b BitVect) int {
+  return vectPopulation(vectIntersection(a, b))
 }
