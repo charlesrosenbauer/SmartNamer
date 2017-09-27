@@ -61,8 +61,8 @@ var extMap = map [string] string {
   ".lhs"  : "[a-zA-Z\\d]+'*",
 
   //My personal language Bzo, because why the hell not?
-  ".bz"   : "[^ $ \\( \\) \\] \\[ \\{ \\} :; \\. \\, \\_ ` \" @ ']+'*",
-  ".lbz"  : "[^ $ \\( \\) \\] \\[ \\{ \\} :; \\. \\, \\_ ` \" @ ']+'*",
+  ".bz"   : "[^ $ \\( \\) \\] \\[ \\{ \\} :; \\. \\, \\_ ` \" @ ' \\s]+'*",
+  ".lbz"  : "[^ $ \\( \\) \\] \\[ \\{ \\} :; \\. \\, \\_ ` \" @ ' \\s]+'*",
 
   //Jai, because why the hell not?
   ".jai"  : "[a-zA-Z][a-zA-Z\\d_]+",
@@ -92,10 +92,10 @@ var extMap = map [string] string {
   ".elm"  : "[a-zA-Z][a-zA-Z\\d_]+",
 
   //Clojure
-  ".clj"  : "[^ \\( \\) \\] \\[ \\} \\{ ;]+",
-  ".cljs" : "[^ \\( \\) \\] \\[ \\} \\{ ;]+",
-  ".cljc" : "[^ \\( \\) \\] \\[ \\} \\{ ;]+",
-  ".edn"  : "[^ \\( \\) \\] \\[ \\} \\{ ;]+",
+  ".clj"  : "[^ \\( \\) \\] \\[ \\} \\{ ; \\s]+",
+  ".cljs" : "[^ \\( \\) \\] \\[ \\} \\{ ; \\s]+",
+  ".cljc" : "[^ \\( \\) \\] \\[ \\} \\{ ; \\s]+",
+  ".edn"  : "[^ \\( \\) \\] \\[ \\} \\{ ; \\s]+",
 
   //Kotlin
   ".kt"  : "[a-zA-Z][a-zA-Z\\d_]+",
@@ -142,7 +142,7 @@ func getIds (text, fname string) ([]string, error) {
   if err0 != nil {
     return failArr, err0
   }
-
+  // TODO: also extract rough line numbers
   ids := regex.FindAllString(text, -1)
 
   return ids, nil
