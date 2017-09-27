@@ -162,7 +162,7 @@ func getIds (text, fname string) ([]StringPos, error) {
   rets := []StringPos{}
 
   for i:=0; i < len(textlines); i++ {
-    ids := regex.FindAllString(text, -1)
+    ids := regex.FindAllString(textlines[i], -1)
     for j:=0; j < len(ids); j++ {
       rets = append(rets, StringPos{ids[j], i})
     }
