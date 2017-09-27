@@ -20,7 +20,7 @@ func main() {
   vect1  = representPosition("main.go", 115, vect1)
   fmt.Println(vectToString(vectIntersection(vect0, vect1)))
 
-  fnames := []string{"src/main.go", "src/filemanager.go", "src/folding.go"}
+  fnames := []string{"src/main.go", "src/filemanager.go", "src/folding.go", "std.bz"}
   fs0, err0 := loadSourceFiles(fnames)
   if err0 != nil {
 
@@ -28,7 +28,7 @@ func main() {
 
   }else{
 
-    var fs1 [][]string
+    var fs1 [][]StringPos
 
     for i:=0; i<len(fs0); i++ {
       fsTemp, err1 := getIds(fs0[i], fnames[i])

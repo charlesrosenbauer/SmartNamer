@@ -6,6 +6,7 @@ import (
   "io/ioutil"
   "regexp"
   "errors"
+  "strings"
 )
 
 
@@ -127,8 +128,22 @@ var extMap = map [string] string {
 
 
 
-func getIds (text, fname string) ([]string, error) {
-  failArr := []string{}
+type StringPos struct {
+  str string
+  pos int
+}
+
+
+
+
+
+
+
+
+
+
+func getIds (text, fname string) ([]StringPos, error) {
+  failArr := []StringPos{}
 
   langRegex := regexp.MustCompile("\\.[a-zA-Z]+")
   lang := langRegex.FindString(fname)  //get file extension to figure out the language
@@ -142,9 +157,17 @@ func getIds (text, fname string) ([]string, error) {
   if err0 != nil {
     return failArr, err0
   }
-  // TODO: also extract rough line numbers
-  ids := regex.FindAllString(text, -1)
 
-  return ids, nil
+  textlines := strings.Split(text, "\n")
+  rets := []StringPos{}
+
+  for i:=0; i < len(textlines); i++ {
+    ids := regex.FindAllString(text, -1)
+    for j:=0; j < len(ids); j++ {
+      rets = append(rets, StringPos{ids[j], i})
+    }
+  }
+
+  return rets, nil
 
 }
