@@ -40,9 +40,13 @@ func main() {
       }
     }
 
+    dbpar := make(map[string]BitVect)
+    db := NameDB{dbpar}
     for i:=0; i<len(fs1); i++ {
-      fmt.Println(fs1[i])
+      db.addFile(fnames[i], fs1[i])
     }
+
+    fmt.Println(db)
 
   }
 
