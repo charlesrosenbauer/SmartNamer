@@ -46,7 +46,7 @@ func main() {
       db.addFile(fnames[i], fs1[i])
     }
 
-    fmt.Println(db)
+    fmt.Println(db.extractArray())
 
   }
 

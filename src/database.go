@@ -36,3 +36,39 @@ func (db NameDB) addFile (fname string, ids []StringPos) {
     }
   }
 }
+
+
+
+
+
+
+
+
+
+
+type StringRepPair struct {
+  str string
+  rep BitVect
+}
+
+
+
+
+
+
+
+
+
+
+func (db NameDB) extractArray () (ret []StringRepPair) {
+
+  ret = make([]StringRepPair, len(db.names))
+
+  i := 0
+  for k, v := range db.names {
+    ret[i] = StringRepPair{k, v}
+    i++
+  }
+
+  return ret
+}
