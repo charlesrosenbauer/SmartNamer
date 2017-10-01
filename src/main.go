@@ -12,6 +12,8 @@ import (
 
 
 func main() {
+  commandLoop()
+
   s0 := "Hello World!"
   s1 := "Help Word!"
   vect0 := representID(s0)
