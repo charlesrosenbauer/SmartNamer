@@ -2,6 +2,10 @@ package main
 
 
 
+import "runtime"
+
+
+
 
 
 
@@ -10,7 +14,9 @@ package main
 
 
 func main() {
-  
+
+  runtime.GOMAXPROCS(runtime.NumCPU())
+
   printStartScreen()
   commandLoop()
 
