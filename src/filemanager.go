@@ -41,6 +41,27 @@ func loadSourceFiles (files []string) ([]string, error) {
 
 
 
+func loadSourceFromMap (files map[string]string) (map[string]string, error) {
+  ret := map[string]string{}
+  for k, _ := range(files) {
+    text, err:= ioutil.ReadFile(k)
+    if err != nil {
+      return ret, err
+    }
+    ret[k] = string(text)
+  }
+  return ret, nil
+}
+
+
+
+
+
+
+
+
+
+
 /*
   Hardcoded map literal for getting a regular expression from a file extension.
   The purpose of this is to handle extracting identifiers from languages with different

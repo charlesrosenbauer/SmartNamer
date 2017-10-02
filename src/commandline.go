@@ -25,7 +25,7 @@ func printHelpScreen() {
   fmt.Println("add-to-workspace [fs] : Add source file to current workspace. Does not actually load the file or perform safety checks.")
   fmt.Println("show-workspace        : Show all files currently in the workspace. They are not necessarily loaded, however.")
   fmt.Println("clear-workspace       : Remove all files from current workspace.")
-  fmt.Println("load-files            : Loads files in workspace into memory for processing.")
+  fmt.Println("load-files       [fs] : Loads contents of any files in the workspace into memory. Optionally can add/load additional files in the process.")
   fmt.Println("?                     : Show Help Screen (You Are Here)")
   fmt.Println("quit                  : Quit the program")
 
@@ -60,10 +60,9 @@ func commandLoop() {
 
   // System State
   var (
-    fnames []string
-    ftexts []string
-    errs   []error
+    errs  []error
   )
+  files := map[string]string{}
 
   // Command Loop State
   reader := bufio.NewReader(os.Stdin)
@@ -84,33 +83,36 @@ func commandLoop() {
 
       case "add-to-workspace" : {
         for i := 1; i < len(command); i++ {
-          fnames = append(fnames, command[i])
+          files[command[i]] = ""
         }
       }
 
       case "show-workspace" : {
-        for _, v := range fnames {
-          fmt.Println(v)
+        for k, _ := range files {
+          fmt.Println(k)
         }
       }
 
       case "clear-workspace" : {
-        fnames = []string{}
+        files = map[string]string{}
       }
 
       case "load-files" : {
+        for i := 1; i < len(command); i++ {
+          files[command[i]] = ""
+        }
         var err error
-        ftexts, err = loadSourceFiles(fnames)
+        files, err = loadSourceFromMap(files)
         if err != nil {
           errs = append(errs, err)
         }
       }
 
       case "show-file-texts" : {
-        if len(ftexts) == 0 {
+        if len(files) == 0 {
           fmt.Println("Nothing loaded yet.")
         }
-        for _, v := range ftexts {
+        for _, v := range files {
           fmt.Println(v)
         }
       }
