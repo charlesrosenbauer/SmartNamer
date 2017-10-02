@@ -82,8 +82,13 @@ func commandLoop() {
 
     if len(command) > 0 {
       switch command[0] {
+
+
+        
       case "quit" :
         cont = false
+
+
 
       case "add-to-workspace" : {
         for i := 1; i < len(command); i++ {
@@ -91,15 +96,21 @@ func commandLoop() {
         }
       }
 
+
+
       case "show-workspace" : {
         for k, _ := range files {
           fmt.Println(k)
         }
       }
 
+
+
       case "clear-workspace" : {
         files = map[string]string{}
       }
+
+
 
       case "load-files" : {
         for i := 1; i < len(command); i++ {
@@ -112,6 +123,8 @@ func commandLoop() {
         }
       }
 
+
+
       case "show-file-texts" : {
         if len(files) == 0 {
           fmt.Println("Nothing loaded yet.")
@@ -120,6 +133,8 @@ func commandLoop() {
           fmt.Println(v)
         }
       }
+
+
 
       case "fold" : {
         var ids [][]StringPos
@@ -141,16 +156,24 @@ func commandLoop() {
         }
       }
 
+
+
       case "show-fold" : {
         db.showDB()
       }
 
+
+
       case "?" :
         printHelpScreen()
+
+
 
       default :
           errs = append(errs, errors.New("Unknown Command"))
       }
+
+
     }
 
     if len(errs) > 0 {
