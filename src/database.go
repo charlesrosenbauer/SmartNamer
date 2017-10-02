@@ -2,6 +2,10 @@ package main
 
 
 
+import "fmt"
+
+
+
 
 
 
@@ -11,6 +15,22 @@ package main
 
 type NameDB struct {
   names map [string] BitVect
+}
+
+
+
+
+
+
+
+
+
+
+func (db NameDB) showDB () {
+  for k, v := range db.names {
+    fmt.Printf("%s : %x %x %x %x %x %x %x %x \n",
+      k, v.bits[0], v.bits[1], v.bits[2], v.bits[3], v.bits[4], v.bits[5], v.bits[6], v.bits[7])
+  }
 }
 
 

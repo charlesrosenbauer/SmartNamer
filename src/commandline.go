@@ -26,8 +26,10 @@ func printHelpScreen() {
   fmt.Println("show-workspace        : Show all files currently in the workspace. They are not necessarily loaded, however.")
   fmt.Println("clear-workspace       : Remove all files from current workspace.")
   fmt.Println("load-files       [fs] : Loads contents of any files in the workspace into memory. Optionally can add/load additional files in the process.")
-  fmt.Println("?                     : Show Help Screen (You Are Here)")
-  fmt.Println("quit                  : Quit the program")
+  fmt.Println("fold                  : Extracts semantic and contextual info from all loaded files via semantic folding.")
+  fmt.Println("show-fold             : Shows data from semantic folding. This is for experts and debugging.")
+  fmt.Println("?                     : Show Help Screen (You Are Here).")
+  fmt.Println("quit                  : Quit the program.")
 
   fmt.Println("\n")
 }
@@ -63,6 +65,8 @@ func commandLoop() {
     errs  []error
   )
   files := map[string]string{}
+  dbpar := map[string]BitVect{}
+  db := NameDB{dbpar}
 
   // Command Loop State
   reader := bufio.NewReader(os.Stdin)
@@ -115,6 +119,30 @@ func commandLoop() {
         for _, v := range files {
           fmt.Println(v)
         }
+      }
+
+      case "fold" : {
+        var ids [][]StringPos
+        var fnames []string
+
+        for k, v := range files {
+          fnames = append(fnames, k)
+          idsTemp, err := getIds(v, k)
+
+          if err != nil {
+            errs = append(errs, err)
+          }else{
+            ids = append(ids, idsTemp)
+          }
+        }
+
+        for i, v := range ids {
+          db.addFile(fnames[i], v)
+        }
+      }
+
+      case "show-fold" : {
+        db.showDB()
       }
 
       case "?" :
