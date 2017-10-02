@@ -2,9 +2,7 @@ package main
 
 
 
-import (
-    "fmt"
-  )
+
 
 
 
@@ -14,14 +12,7 @@ import (
 func main() {
   commandLoop()
 
-  s0 := "Hello World!"
-  s1 := "Help Word!"
-  vect0 := representID(s0)
-  vect0  = representPosition("main.go", 15, vect0)
-  vect1 := representID(s1)
-  vect1  = representPosition("main.go", 115, vect1)
-  fmt.Println(vectToString(vectIntersection(vect0, vect1)))
-
+  /*
   fnames := []string{"src/main.go", "src/filemanager.go", "src/folding.go"}
   fs0, err0 := loadSourceFiles(fnames)
   if err0 != nil {
@@ -51,6 +42,7 @@ func main() {
     fmt.Println(db.extractArray())
 
   }
+  */
 
 
 }
