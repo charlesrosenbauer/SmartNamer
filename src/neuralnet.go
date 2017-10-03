@@ -389,7 +389,7 @@ func toArr512 (x []float32) Arr512 {
 
 
 
-func predict256 (p Perceptron256, x Arr256) []float32 {
+func predict256 (p *Perceptron256, x *Arr256) []float32 {
   ret := make([]float32, len(p.neurons))
   for i, v := range p.neurons {
     ret[i] = dot256(v, x)
@@ -406,7 +406,7 @@ func predict256 (p Perceptron256, x Arr256) []float32 {
 
 
 
-func predict512 (p Perceptron512, x Arr512) []float32 {
+func predict512 (p *Perceptron512, x *Arr512) []float32 {
   ret := make([]float32, len(p.neurons))
   for i, v := range p.neurons {
     ret[i] = dot512(v, x)
@@ -423,9 +423,10 @@ func predict512 (p Perceptron512, x Arr512) []float32 {
 
 
 
-func learn256 (p *Perceptron256, in Arr256, err float32, eta float32) {
+func learn256 (p *Perceptron256, in *Arr256, err float32, eta float32) {
+  val := err * eta
   for i, v := range p.neurons {
-    p.neurons[i] = add256(v, mul256scalar(in, (err * eta)))
+    p.neurons[i] = add256(v, mul256scalar(in, val))
   }
 }
 
@@ -438,8 +439,92 @@ func learn256 (p *Perceptron256, in Arr256, err float32, eta float32) {
 
 
 
-func learn512 (p *Perceptron512, in Arr512, err float32, eta float32) {
+func learn512 (p *Perceptron512, in *Arr512, err float32, eta float32) {
+  val := err * eta
   for i, v := range p.neurons {
-    p.neurons[i] = add512(v, mul512scalar(in, (err * eta)))
+    p.neurons[i] = add512(v, mul512scalar(in, val))
   }
 }
+
+
+
+
+
+
+
+
+
+
+type IdPredictor struct {
+  /*
+    This is the neural network for predicting identifiers. It takes in a single
+    bitvect and returns up to 5 bitvects. The network consists of 5 "layers",
+    and learns like a perceptron, though it's structure is a bit unorthodox for
+    one. Each layer produces a bitvect output. Inputs for each layer consist of
+    the overall input and the output of the previous layer. The first layer only
+    takes the input bitvect as an input, as there is no previous layer.
+  */
+
+  // Layer A
+  wordADirect Perceptron512
+
+  // Layer B
+  wordBDirect Perceptron512
+  wordBSecond Perceptron256
+
+  // Layer C
+  wordCDirect Perceptron512
+  wordBSecond Perceptron256
+
+  // Layer D
+  wordDDirect Perceptron512
+  wordBSecond Perceptron256
+
+  // Layer E
+  wordEDirect Perceptron512
+  wordBSecond Perceptron256
+}
+
+
+
+
+
+
+
+
+
+/*
+// !!HARD HAT ZONE!!
+func (pred *IdPredictor) predict (input BitVect, numWords int) [5]BitVect {
+  var ret [5]BitVect
+  for i := 0; i < 5; i++ {
+    for j := 0; j < 8; j++ {
+      ret[i].bits[j] = 0
+    }
+  }
+
+
+  if numWords < 1 {
+    return ret
+  }
+
+
+  var in Arr512
+  for i := 0; i < 512; i++ {
+    in.vals[i] = 0.0
+    x := i / 64
+    y := i % 64
+    if (input.bits[x] & (1 << y)) != 0 {
+      in.vals[i] = 1.0
+    }
+  }
+
+
+  if numWords > 1 {
+    ret[0] = predict512(pred.wordADirect, in)
+  }
+
+
+  return ret
+}
+*/
