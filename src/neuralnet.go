@@ -61,7 +61,7 @@ type Perceptron512 struct {
 
 
 
-func mul256 (a, b Arr256) Arr256 {
+func mul256 (a, b *Arr256) *Arr256 {
   for i := 0; i < 256; i++ {
     a.vals[i] *= b.vals[i]
   }
@@ -77,7 +77,7 @@ func mul256 (a, b Arr256) Arr256 {
 
 
 
-func mul512 (a, b Arr512) Arr512 {
+func mul512 (a, b *Arr512) *Arr512 {
   for i := 0; i < 512; i++ {
     a.vals[i] *= b.vals[i]
   }
@@ -93,7 +93,7 @@ func mul512 (a, b Arr512) Arr512 {
 
 
 
-func dot256 (a, b Arr256) float32 {
+func dot256 (a, b *Arr256) float32 {
   var ret float32 = 0.0
   for i := 0; i < 256; i++ {
     ret += a.vals[i] * b.vals[i]
@@ -110,7 +110,7 @@ func dot256 (a, b Arr256) float32 {
 
 
 
-func dot512 (a, b Arr512) float32 {
+func dot512 (a, b *Arr512) float32 {
   var ret float32 = 0.0
   for i := 0; i < 512; i++ {
     ret += a.vals[i] * b.vals[i]
@@ -127,7 +127,7 @@ func dot512 (a, b Arr512) float32 {
 
 
 
-func mul256scalar (a Arr256, b float32) Arr256 {
+func mul256scalar (a *Arr256, b float32) *Arr256 {
   for i := 0; i < 256; i++ {
     a.vals[i] *= b
   }
@@ -143,7 +143,7 @@ func mul256scalar (a Arr256, b float32) Arr256 {
 
 
 
-func mul512scalar (a Arr512, b float32) Arr512 {
+func mul512scalar (a *Arr512, b float32) *Arr512 {
   for i := 0; i < 512; i++ {
     a.vals[i] *= b
   }
@@ -159,7 +159,7 @@ func mul512scalar (a Arr512, b float32) Arr512 {
 
 
 
-func add256 (a, b Arr256) Arr256 {
+func add256 (a, b *Arr256) *Arr256 {
   for i := 0; i < 256; i++ {
     a.vals[i] += b.vals[i]
   }
@@ -175,7 +175,7 @@ func add256 (a, b Arr256) Arr256 {
 
 
 
-func add512 (a, b Arr512) Arr512 {
+func add512 (a, b *Arr512) *Arr512 {
   for i := 0; i < 512; i++ {
     a.vals[i] += b.vals[i]
   }
@@ -191,7 +191,7 @@ func add512 (a, b Arr512) Arr512 {
 
 
 
-func add256scalar (a Arr256, b float32) Arr256 {
+func add256scalar (a *Arr256, b float32) *Arr256 {
   for i := 0; i < 256; i++ {
     a.vals[i] += b
   }
@@ -207,7 +207,7 @@ func add256scalar (a Arr256, b float32) Arr256 {
 
 
 
-func add512scalar (a Arr512, b float32) Arr512 {
+func add512scalar (a *Arr512, b float32) *Arr512 {
   for i := 0; i < 512; i++ {
     a.vals[i] += b
   }
@@ -223,7 +223,7 @@ func add512scalar (a Arr512, b float32) Arr512 {
 
 
 
-func sum256 (a Arr256) float32 {
+func sum256 (a *Arr256) float32 {
   var ret float32 = 0.0
   for i := 0; i < 256; i++ {
     ret += a.vals[i]
@@ -240,7 +240,7 @@ func sum256 (a Arr256) float32 {
 
 
 
-func sum512 (a Arr512) float32 {
+func sum512 (a *Arr512) float32 {
   var ret float32 = 0.0
   for i := 0; i < 512; i++ {
     ret += a.vals[i]
@@ -257,7 +257,7 @@ func sum512 (a Arr512) float32 {
 
 
 
-func mul512x512 (a, b Arr512) Arr512 {
+func mul512x512 (a, b *Arr512) *Arr512 {
   for i := 0; i < 512; i++ {
     var sum float32 = 0.0
     val := a.vals[i]
@@ -278,7 +278,7 @@ func mul512x512 (a, b Arr512) Arr512 {
 
 
 
-func mul512x256 (a Arr512, b Arr256) Arr512 {
+func mul512x256 (a *Arr512, b *Arr256) *Arr512 {
   for i := 0; i < 512; i++ {
     var sum float32 = 0.0
     val := a.vals[i]
@@ -299,7 +299,7 @@ func mul512x256 (a Arr512, b Arr256) Arr512 {
 
 
 
-func mul256x512 (a Arr256, b Arr512) Arr256 {
+func mul256x512 (a *Arr256, b *Arr512) *Arr256 {
   for i := 0; i < 256; i++ {
     var sum float32 = 0.0
     val := a.vals[i]
@@ -320,7 +320,7 @@ func mul256x512 (a Arr256, b Arr512) Arr256 {
 
 
 
-func mul256x256 (a, b Arr256) Arr256 {
+func mul256x256 (a, b *Arr256) *Arr256 {
   for i := 0; i < 256; i++ {
     var sum float32 = 0.0
     val := a.vals[i]
@@ -392,7 +392,7 @@ func toArr512 (x []float32) Arr512 {
 func predict256 (p *Perceptron256, x *Arr256) []float32 {
   ret := make([]float32, len(p.neurons))
   for i, v := range p.neurons {
-    ret[i] = dot256(v, x)
+    ret[i] = dot256(&v, x)
   }
   return ret
 }
@@ -409,7 +409,7 @@ func predict256 (p *Perceptron256, x *Arr256) []float32 {
 func predict512 (p *Perceptron512, x *Arr512) []float32 {
   ret := make([]float32, len(p.neurons))
   for i, v := range p.neurons {
-    ret[i] = dot512(v, x)
+    ret[i] = dot512(&v, x)
   }
   return ret
 }
@@ -426,7 +426,8 @@ func predict512 (p *Perceptron512, x *Arr512) []float32 {
 func learn256 (p *Perceptron256, in *Arr256, err float32, eta float32) {
   val := err * eta
   for i, v := range p.neurons {
-    p.neurons[i] = add256(v, mul256scalar(in, val))
+    tmp := add256(&v, mul256scalar(in, val))
+    p.neurons[i] = *tmp
   }
 }
 
@@ -442,7 +443,8 @@ func learn256 (p *Perceptron256, in *Arr256, err float32, eta float32) {
 func learn512 (p *Perceptron512, in *Arr512, err float32, eta float32) {
   val := err * eta
   for i, v := range p.neurons {
-    p.neurons[i] = add512(v, mul512scalar(in, val))
+    tmp := add512(&v, mul512scalar(in, val))
+    p.neurons[i] = *tmp
   }
 }
 
@@ -474,15 +476,15 @@ type IdPredictor struct {
 
   // Layer C
   wordCDirect Perceptron512
-  wordBSecond Perceptron256
+  wordCSecond Perceptron256
 
   // Layer D
   wordDDirect Perceptron512
-  wordBSecond Perceptron256
+  wordDSecond Perceptron256
 
   // Layer E
   wordEDirect Perceptron512
-  wordBSecond Perceptron256
+  wordESecond Perceptron256
 }
 
 
@@ -493,9 +495,98 @@ type IdPredictor struct {
 
 
 
-/*
-// !!HARD HAT ZONE!!
+
+func toBitVect512 (arr Arr512, threshold float32) BitVect {
+  var ret BitVect
+  for i := 0; i < 512; i++ {
+    if arr.vals[i] > threshold {
+      var x uint = uint(i) / 64
+      var y uint = uint(i) % 64
+      ret.bits[x] |= (1 << y)
+    }
+  }
+  return ret
+}
+
+
+
+
+
+
+
+
+
+
+func toBitVect256 (arr Arr256, threshold float32) BitVect {
+  var ret BitVect
+  for i := 0; i < 256; i++ {
+    if arr.vals[i] > threshold {
+      var x uint = uint(i) / 64
+      var y uint = uint(i) % 64
+      ret.bits[x] |= (1 << y)
+    }
+  }
+  return ret
+}
+
+
+
+
+
+
+
+
+
+
+func fromBitVect512 (in *BitVect) *Arr512 {
+  var ret Arr512
+  for i := 0; i < 512; i++ {
+    ret.vals[i] = 0.0
+    var x uint = uint(i) / 64
+    var y uint = uint(i) % 64
+    if (in.bits[x] & (1 << y)) != 0 {
+      ret.vals[i] = 1.0
+    }
+  }
+  return &ret
+}
+
+
+
+
+
+
+
+
+
+
+func fromBitVect256 (in *BitVect) *Arr256 {
+  var ret Arr256
+  for i := 0; i < 256; i++ {
+    ret.vals[i] = 0.0
+    var x uint = uint(i) / 64
+    var y uint = uint(i) % 64
+    if (in.bits[x] & (1 << y)) != 0 {
+      ret.vals[i] = 1.0
+    }
+  }
+  return &ret
+}
+
+
+
+
+
+
+
+
+
+
 func (pred *IdPredictor) predict (input BitVect, numWords int) [5]BitVect {
+
+  const THRESHOLD float32 = 0.9
+
+
   var ret [5]BitVect
   for i := 0; i < 5; i++ {
     for j := 0; j < 8; j++ {
@@ -510,21 +601,37 @@ func (pred *IdPredictor) predict (input BitVect, numWords int) [5]BitVect {
 
 
   var in Arr512
-  for i := 0; i < 512; i++ {
-    in.vals[i] = 0.0
-    x := i / 64
-    y := i % 64
-    if (input.bits[x] & (1 << y)) != 0 {
-      in.vals[i] = 1.0
-    }
-  }
+  in = *fromBitVect512(&input)
 
 
   if numWords > 1 {
-    ret[0] = predict512(pred.wordADirect, in)
+    ret[0] = toBitVect256( toArr256( predict512( &pred.wordADirect, &in ) ), THRESHOLD )
+  }
+  if numWords > 2 {
+    vec0 := fromBitVect256(&ret[0])
+    dir  := toArr256( predict512( &pred.wordBDirect, &in  ) )
+    sec  := toArr256( predict256( &pred.wordBSecond, vec0 ) )
+    ret[1] = toBitVect256( *add256(&dir, &sec), THRESHOLD )
+  }
+  if numWords > 3 {
+    vec1 := fromBitVect256(&ret[1])
+    dir  := toArr256( predict512( &pred.wordCDirect, &in  ) )
+    sec  := toArr256( predict256( &pred.wordCSecond, vec1 ) )
+    ret[2] = toBitVect256( *add256(&dir, &sec), THRESHOLD )
+  }
+  if numWords > 4 {
+    vec2 := fromBitVect256(&ret[2])
+    dir  := toArr256( predict512( &pred.wordDDirect, &in  ) )
+    sec  := toArr256( predict256( &pred.wordDSecond, vec2 ) )
+    ret[3] = toBitVect256( *add256(&dir, &sec), THRESHOLD )
+  }
+  if numWords > 5 {
+    vec3 := fromBitVect256(&ret[3])
+    dir  := toArr256( predict512( &pred.wordEDirect, &in  ) )
+    sec  := toArr256( predict256( &pred.wordESecond, vec3 ) )
+    ret[4] = toBitVect256( *add256(&dir, &sec), THRESHOLD )
   }
 
 
   return ret
 }
-*/
