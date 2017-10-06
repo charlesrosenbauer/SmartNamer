@@ -8,6 +8,7 @@ import (
   "os"
   "strings"
   "errors"
+  "sort"
 )
 
 
@@ -28,6 +29,9 @@ func printHelpScreen() {
   fmt.Println("load-files       [fs] : Loads contents of any files in the workspace into memory. Optionally can add/load additional files in the process.")
   fmt.Println("fold                  : Extracts semantic and contextual info from all loaded files via semantic folding.")
   fmt.Println("show-fold             : Shows data from semantic folding. This is for experts and debugging.")
+  fmt.Println("add-words        [ws] : Adds words to the word database. These are combined for Id suggestions.")
+  fmt.Println("query-wors       [ws] : Provide a set of words to determine which ones are in the word database.")
+  fmt.Println("show-words            : Shows all words in the word database (a lot of text).")
   fmt.Println("?                     : Show Help Screen (You Are Here).")
   fmt.Println("quit                  : Quit the program.")
 
@@ -67,6 +71,10 @@ func commandLoop() {
   files := map[string]string{}
   dbpar := map[string]BitVect{}
   db := NameDB{dbpar}
+  worddb := NameDB{map[string]BitVect{}}
+  for _, v := range words {
+    worddb.names[v] = representID(v)
+  }
 
   // Command Loop State
   reader := bufio.NewReader(os.Stdin)
@@ -84,7 +92,7 @@ func commandLoop() {
       switch command[0] {
 
 
-        
+
       case "quit" :
         cont = false
 
@@ -160,6 +168,40 @@ func commandLoop() {
 
       case "show-fold" : {
         db.showDB()
+      }
+
+
+
+      case "add-words" : {
+        for i := 1; i < len(command); i++ {
+          worddb.names[command[i]] = representID(command[i])
+        }
+      }
+
+
+
+      case "query-words" : {
+        for i := 1; i < len(command); i++ {
+          _, ok := worddb.names[command[i]]
+          if ok {
+            fmt.Println(command[i], " is recorded")
+          }else{
+            fmt.Println(command[i], " is not recorded")
+          }
+        }
+      }
+
+
+
+      case "show-words" : {
+        var list []string
+        for i, _ := range worddb.names {
+          list = append(list, i)
+        }
+        sort.Strings(list)
+        for _, v := range list {
+          fmt.Println(v)
+        }
       }
 
 
