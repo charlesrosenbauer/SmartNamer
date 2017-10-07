@@ -2,7 +2,10 @@ package main
 
 
 
-import "fmt"
+import (
+  "fmt"
+  "sort"
+)
 
 
 
@@ -42,7 +45,7 @@ func (db NameDB) showDB () {
 
 
 
-func (db NameDB) addFile (fname string, ids []StringPos) {
+func (db *NameDB) addFile (fname string, ids []StringPos) {
 
   for i:=0; i<len(ids); i++ {
     id := ids[i].str
@@ -80,7 +83,7 @@ type StringRepPair struct {
 
 
 
-func (db NameDB) extractArray () (ret []StringRepPair) {
+func (db *NameDB) extractArray () (ret []StringRepPair) {
 
   ret = make([]StringRepPair, len(db.names))
 
@@ -90,5 +93,98 @@ func (db NameDB) extractArray () (ret []StringRepPair) {
     i++
   }
 
+  return ret
+}
+
+
+
+
+
+
+
+
+
+
+// Because I can't make interfaces with anonymous structs apparently
+type StringFloatList struct{
+  x []struct{
+    s string
+    f float32
+  }
+}
+
+
+
+
+
+
+
+
+
+
+func (s StringFloatList) Len () int {
+  return len(s.x)
+}
+
+
+
+
+
+
+
+
+
+
+func (s StringFloatList) Less (i, j int) bool {
+  return s.x[i].f < s.x[j].f
+}
+
+
+
+
+
+
+
+
+
+
+func (s StringFloatList) Swap (i, j int) {
+  temp := s.x[i]
+  s.x[i] = s.x[j]
+  s.x[j] = temp
+}
+
+
+
+
+
+
+
+
+
+
+func (db *NameDB) findSimilar (comp BitVect, num int) []string {
+  var list []struct{s string; f float32}
+
+  for i, v := range db.names {
+    unionPop := float32(vectPopulation(vectUnion(v, comp)))
+    if unionPop < 1 {
+      unionPop = 0.001  // stop x/0 errors
+    }
+    interPop := float32(vectMatch(v, comp))
+    var div float32 = interPop / unionPop
+    item := struct{s string; f float32}{i, div}
+    list = append(list, item)
+  }
+  newlist := StringFloatList{list}
+  sort.Sort(newlist)
+
+  var ret []string
+  for i := 1; i <= num; i++ {
+    index := len(newlist.x) - i
+    if index >= 0 {
+      ret = append(ret, newlist.x[index].s)
+    }
+  }
   return ret
 }
