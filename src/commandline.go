@@ -32,6 +32,7 @@ func printHelpScreen() {
   fmt.Println("add-words        [ws] : Adds words to the word database. These are combined for Id suggestions.")
   fmt.Println("query-wors       [ws] : Provide a set of words to determine which ones are in the word database.")
   fmt.Println("show-words            : Shows all words in the word database (a lot of text).")
+  fmt.Println("similar-words    [ws] : Shows top 5 words in the word database that appear similar to provided words. Provides unusual results on occasion.")
   fmt.Println("?                     : Show Help Screen (You Are Here).")
   fmt.Println("quit                  : Quit the program.")
 
@@ -86,7 +87,13 @@ func commandLoop() {
     if err != nil {
       fmt.Println(err)
     }
-    command := strings.Split(strings.Trim(text, "\n"), " ")
+    commandtemp := strings.Split(strings.Trim(text, "\n"), " ")
+    var command []string
+    for _, v := range commandtemp {
+      if v != "" {
+        command = append(command, v)
+      }
+    }
 
     if len(command) > 0 {
       switch command[0] {
@@ -188,6 +195,25 @@ func commandLoop() {
           }else{
             fmt.Println(command[i], " is not recorded")
           }
+        }
+      }
+
+
+
+      case "similar-words" : {
+        for i := 1; i < len(command); i++ {
+          word := representID(command[i])
+          val, ok := db.names[command[i]]
+          if ok {
+            word = val
+          }
+
+          list := worddb.findSimilar(word, 5)
+          fmt.Println("Words similar to: ", command[i], ": ")
+          for _, v := range list {
+            fmt.Println("    ", v)
+          }
+          fmt.Println("\n")
         }
       }
 
