@@ -29,8 +29,9 @@ func printHelpScreen() {
   fmt.Println("load-files       [fs] : Loads contents of any files in the workspace into memory. Optionally can add/load additional files in the process.")
   fmt.Println("fold                  : Extracts semantic and contextual info from all loaded files via semantic folding.")
   fmt.Println("show-fold             : Shows data from semantic folding. This is for experts and debugging.")
+  fmt.Println("show-word-fold        : Similar to show-fold, but shows data from the word database.")
   fmt.Println("add-words        [ws] : Adds words to the word database. These are combined for Id suggestions.")
-  fmt.Println("query-wors       [ws] : Provide a set of words to determine which ones are in the word database.")
+  fmt.Println("query-words      [ws] : Provide a set of words to determine which ones are in the word database.")
   fmt.Println("show-words            : Shows all words in the word database (a lot of text).")
   fmt.Println("similar-words    [ws] : Shows top 5 words in the word database that appear similar to provided words. Provides unusual results on occasion.")
   fmt.Println("?                     : Show Help Screen (You Are Here).")
@@ -155,6 +156,13 @@ func commandLoop() {
         var ids [][]StringPos
         var fnames []string
 
+
+        // Reset Databases
+        db = NameDB{map[string]BitVect{}}
+        for _, v := range words {
+          worddb.names[v] = representID(v)
+        }
+
         for k, v := range files {
           fnames = append(fnames, k)
           idsTemp, err := getIds(v, k)
@@ -169,12 +177,29 @@ func commandLoop() {
         for i, v := range ids {
           db.addFile(fnames[i], v)
         }
+
+        // Load any applicable contexts into worddb
+        tempdb := worddb
+        for i, val := range db.names {
+          key := strings.ToLower(i)
+          _, ok := worddb.names[key]
+          if ok {
+            tempdb.names[key] = val
+          }
+        }
+        worddb = tempdb
       }
 
 
 
       case "show-fold" : {
         db.showDB()
+      }
+
+
+
+      case "show-word-fold" : {
+        worddb.showDB()
       }
 
 
