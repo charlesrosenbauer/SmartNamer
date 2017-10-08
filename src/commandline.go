@@ -34,6 +34,14 @@ func printHelpScreen() {
   fmt.Println("query-words      [ws] : Provide a set of words to determine which ones are in the word database.")
   fmt.Println("show-words            : Shows all words in the word database (a lot of text).")
   fmt.Println("similar-words    [ws] : Shows top 5 words in the word database that appear similar to provided words. Provides unusual results on occasion.")
+  fmt.Println("get-case              : Get letter case used for ID suggestions.")
+  fmt.Println("set-case       [case] : Set letter case used for ID suggestions. Options are camelcase, snakecase, and kebabcase.")
+  fmt.Println("set-upper             : Set all ID suggestions to start with an uppercase letter.")
+  fmt.Println("set-lower             : Set all ID suggestions to start with a lowercase letter.")
+  fmt.Println("get-capitalization    : Check if ID suggestions are set to start with uppercase or lowercase letters.")
+  //fmt.Println("learn                 : Trains neural network for ID prediction. May take a while.")
+  //fmt.Println("relearn               : Resets neural network, then runs implicit learn command.")
+  //fmt.Println("predict          [ws] : Takes a list of IDs and provides suggestions for better replacements.")
   fmt.Println("?                     : Show Help Screen (You Are Here).")
   fmt.Println("quit                  : Quit the program.")
 
@@ -64,6 +72,37 @@ func printStartScreen() {
 
 
 
+type Case int
+const (
+  CAMELCASE Case = iota
+  SNAKECASE Case = iota
+  KEBABCASE Case = iota
+)
+
+
+
+
+
+
+
+
+
+
+type Capitalization int
+const (
+  UPPERCASE Capitalization = iota
+  LOWERCASE Capitalization = iota
+)
+
+
+
+
+
+
+
+
+
+
 func commandLoop() {
 
   // System State
@@ -77,6 +116,9 @@ func commandLoop() {
   for _, v := range words {
     worddb.names[v] = representID(v)
   }
+
+  lettercase := CAMELCASE
+  capitlcase := LOWERCASE
 
   // Command Loop State
   reader := bufio.NewReader(os.Stdin)
@@ -103,6 +145,76 @@ func commandLoop() {
 
       case "quit" :
         cont = false
+
+
+
+      case "get-case" : {
+        switch lettercase {
+
+          case CAMELCASE :
+            fmt.Println("Camel case (camelCase)")
+
+          case SNAKECASE :
+            fmt.Println("Snake case (snake_case)")
+
+          case KEBABCASE :
+            fmt.Println("Kebab case (kebab-case)")
+
+          default        : errs = append(errs, errors.New("Unexpected Letter case Value. Alert the developers!"))
+        }
+      }
+
+
+
+      case "set-case" : {
+        faulterr := errors.New("No suitable case value provided.\n    Valid values are \"camelcase\", \"snakecase\", and \"kebabcase\"")
+        if len(command) > 1 {
+          switch command[1] {
+
+            case "camelcase" :
+              lettercase = CAMELCASE
+
+            case "snakecase" :
+              lettercase = SNAKECASE
+
+            case "kebabcase" :
+              lettercase = KEBABCASE
+
+            default :
+              errs = append(errs, faulterr)
+          }
+        }else{
+          errs = append(errs, faulterr)
+        }
+      }
+
+
+
+      case "set-upper" : {
+        capitlcase = UPPERCASE
+      }
+
+
+
+      case "set-lower" : {
+        capitlcase = LOWERCASE
+      }
+
+
+
+      case "get-capitalization" : {
+        switch capitlcase {
+
+        case UPPERCASE:
+          fmt.Println("Uppercase")
+
+        case LOWERCASE:
+          fmt.Println("Lowercase")
+
+        default:
+          errs = append(errs, errors.New("Unexpected Capitalization case value. Alert the developers!"))
+        }
+      }
 
 
 
@@ -255,6 +367,24 @@ func commandLoop() {
         }
       }
 
+
+/*
+      case "learn" : {
+
+      }
+
+
+
+      case "relearn" : {
+
+      }
+
+
+
+      case "predict" : {
+
+      }
+*/
 
 
       case "?" :
