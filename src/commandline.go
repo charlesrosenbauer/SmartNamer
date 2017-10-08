@@ -120,6 +120,9 @@ func commandLoop() {
   lettercase := CAMELCASE
   capitlcase := LOWERCASE
 
+  var predictor Predictor
+  predictor.New()
+
   // Command Loop State
   reader := bufio.NewReader(os.Stdin)
   cont := true
