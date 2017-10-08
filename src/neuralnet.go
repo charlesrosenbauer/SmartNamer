@@ -89,7 +89,7 @@ func (pred *Predictor) New () {
 
 
 
-func (net *NetLayer) predict (word BitVect) BitVect {
+func (net *NetLayer) predict (word BitVect) (BitVect, *[256]float32) {
   var input [512]float32
   for i := 0; i < 512; i++ {
     var x uint = uint(i) % 64
@@ -101,19 +101,20 @@ func (net *NetLayer) predict (word BitVect) BitVect {
   }
 
   var ret BitVect
+  var accums [256]float32
   for n := 0; n < 256; n++ {
-    var accum float32 = 0
+    accums[n] = 0
     for w := 0; w < 512; w++ {
-      accum += net.weights[n][w] * input[w]
+      accums[n] += net.weights[n][w] * input[w]
     }
-    if accum > THRESHOLD {
+    if accums[n] > THRESHOLD {
       var x uint = uint(n) % 64
       var y uint = uint(n) / 64
       ret.bits[y] |= (1 << x)
     }
   }
 
-  return ret
+  return ret, &accums
 }
 
 
@@ -125,7 +126,7 @@ func (net *NetLayer) predict (word BitVect) BitVect {
 
 
 
-func (net *NetLayer) learn (in, out BitVect, rate float32) {
+func (net *NetLayer) learn (in, out BitVect, rate float32, accums *[256]float32) {
   var input  [512]float32
   var output [256]float32
   for i := 0; i < 512; i++ {
@@ -141,12 +142,7 @@ func (net *NetLayer) learn (in, out BitVect, rate float32) {
   }
 
   for n := 0; n < 256; n++ {
-    var accum float32 = 0
-    for w := 0; w < 512; w++ {
-      accum += net.weights[n][w] * input[w]
-    }
-
-    var delta float32 = rate * (output[n] - accum)
+    var delta float32 = rate * (output[n] - accums[n])
     for w := 0; w < 512; w++ {
       if input[w] > 0.0 {
         net.weights[n][w] += net.weights[n][w] * delta
