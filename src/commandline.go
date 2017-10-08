@@ -41,7 +41,7 @@ func printHelpScreen() {
   fmt.Println("get-capitalization    : Check if ID suggestions are set to start with uppercase or lowercase letters.")
   //fmt.Println("learn                 : Trains neural network for ID prediction. May take a while.")
   //fmt.Println("relearn               : Resets neural network, then runs implicit learn command.")
-  //fmt.Println("predict          [ws] : Takes a list of IDs and provides suggestions for better replacements.")
+  fmt.Println("predict          [ws] : Takes a list of IDs and provides suggestions for better replacements.")
   fmt.Println("?                     : Show Help Screen (You Are Here).")
   fmt.Println("quit                  : Quit the program.")
 
@@ -381,13 +381,21 @@ func commandLoop() {
       case "relearn" : {
 
       }
-
+*/
 
 
       case "predict" : {
-
+        for i := 1; i < len(command); i++ {
+          word, ok := db.names[command[i]]
+          if ok {
+            list := predictor.predictWords(word, 5, &worddb)
+            fmt.Println("Prediction: ", formatConcat(list, lettercase, capitlcase))
+          }else{
+            fmt.Println("Identifier", command[i], "does not exist in the code.")
+          }
+        }
       }
-*/
+
 
 
       case "?" :
@@ -396,7 +404,7 @@ func commandLoop() {
 
 
       default :
-          errs = append(errs, errors.New("Unknown Command"))
+        errs = append(errs, errors.New("Unknown Command"))
       }
 
 
