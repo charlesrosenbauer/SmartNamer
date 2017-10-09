@@ -160,7 +160,7 @@ func (net *NetLayer) learn (in, out BitVect, rate float32, accums *[256]float32)
 
 
 
-func (pred *Predictor) predictWords (in BitVect, numwords int, worddb *NameDB) []string {
+func (pred *Predictor) predictWords (in BitVect, numwords int, worddb *NameDB) [][]string {
 
   maxwords := 5
   if (numwords > 0) && (numwords < 5){
@@ -177,10 +177,10 @@ func (pred *Predictor) predictWords (in BitVect, numwords int, worddb *NameDB) [
     ctxVects[i], _ = pred.contextLayers[i].predict(stdVects[i])
   }
 
-  var ret []string
+  var ret [][]string
   for i := 1; i < maxwords; i++ {
     stdVects[i] = vectUnion(stdVects[i], ctxVects[i-1])
-    ret = append(ret, (worddb.findSimilar(stdVects[i], 1)[0]))
+    ret = append(ret, (worddb.findSimilar(stdVects[i], 5)))
   }
 
   return ret
@@ -200,7 +200,7 @@ func formatConcat (ss []string, c Case, l Capitalization) string {
   for i := 1; i < len(ss); i++ {
     if (c == CAMELCASE) || (l == UPPERCASE) {
       ss[i] = strings.Title(ss[i])
-    }else if !isCamel{
+    }else{
       ss[i] = strings.ToLower(ss[i])
     }
   }

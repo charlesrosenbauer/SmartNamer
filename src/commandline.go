@@ -389,7 +389,10 @@ func commandLoop() {
           word, ok := db.names[command[i]]
           if ok {
             list := predictor.predictWords(word, 5, &worddb)
-            fmt.Println("Prediction: ", formatConcat(list, lettercase, capitlcase))
+            fmt.Println("Predictions: ")
+            for _, v := range list {
+              fmt.Println(formatConcat(v, lettercase, capitlcase))
+            }
           }else{
             fmt.Println("Identifier", command[i], "does not exist in the code.")
           }
