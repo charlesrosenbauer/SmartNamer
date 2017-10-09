@@ -178,6 +178,7 @@ func (pred *Predictor) predictWords (in BitVect, numwords int, worddb *NameDB) [
   }
 
   var ret [][]string
+  ret = append(ret, (worddb.findSimilar(stdVects[0], 5)))
   for i := 1; i < maxwords; i++ {
     stdVects[i] = vectUnion(stdVects[i], ctxVects[i-1])
     ret = append(ret, (worddb.findSimilar(stdVects[i], 5)))

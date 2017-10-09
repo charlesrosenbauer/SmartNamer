@@ -41,7 +41,7 @@ func printHelpScreen() {
   fmt.Println("get-capitalization    : Check if ID suggestions are set to start with uppercase or lowercase letters.")
   //fmt.Println("learn                 : Trains neural network for ID prediction. May take a while.")
   //fmt.Println("relearn               : Resets neural network, then runs implicit learn command.")
-  fmt.Println("predict          [ws] : Takes a list of IDs and provides suggestions for better replacements.")
+  fmt.Println("predict      [n] [ws] : Takes a list of IDs and a number of words, n (limit 5) and provides suggestions for better replacements consisting of n concatenated words.")
   fmt.Println("?                     : Show Help Screen (You Are Here).")
   fmt.Println("quit                  : Quit the program.")
 
@@ -385,16 +385,33 @@ func commandLoop() {
 
 
       case "predict" : {
-        for i := 1; i < len(command); i++ {
-          word, ok := db.names[command[i]]
-          if ok {
-            list := predictor.predictWords(word, 5, &worddb)
-            fmt.Println("Predictions: ")
-            for _, v := range list {
-              fmt.Println(formatConcat(v, lettercase, capitlcase))
+        if len(command) < 2 {
+          errs = append(errs, errors.New("Insufficient Parameters"))
+        }else{
+          numwords := 0
+          switch command[1] {
+          case "1" : numwords = 1
+          case "2" : numwords = 2
+          case "3" : numwords = 3
+          case "4" : numwords = 4
+          case "5" : numwords = 5
+          }
+          if numwords != 0 {
+
+            for i := 2; i < len(command); i++ {
+              word, ok := db.names[command[i]]
+              if ok {
+                list := randomStringPredictions(predictor.predictWords(word, numwords, &worddb), lettercase, capitlcase, 10)
+                fmt.Println("Predictions: ")
+                for _, v := range list {
+                  fmt.Println(v, "\n")
+                }
+              }else{
+                fmt.Println("Identifier", command[i], "does not exist in the code.")
+              }
             }
           }else{
-            fmt.Println("Identifier", command[i], "does not exist in the code.")
+            errs = append(errs, errors.New("Invalid word number: " + command[1]))
           }
         }
       }
