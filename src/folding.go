@@ -244,7 +244,7 @@ func measureSimilarity (a, b BitVect) float32 {
   unionPop := float32(vectPopulation(vectUnion(a, b)))
   interPop := float32(vectMatch(a, b))
   if interPop < 1 {
-    interPop = 0.001
+    interPop = 0.01
   }
   return unionPop / interPop
 }
