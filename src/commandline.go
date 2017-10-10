@@ -373,17 +373,8 @@ func commandLoop() {
 
 
       case "learn" : {
-        accum := float32(0.0)
-        count := 0
-        for _, v := range db.names {
-          for i := 1; i < 6; i++ {
-            accum += predictor.learnWord(v, v, lettercase, capitlcase, &worddb, i, 0.05)
-            count++
-            if count % 250 == 1 {
-              fmt.Println("Average error:", (accum / float32(count)))
-            }
-          }
-        }
+        
+        fullLearnPass(&db, &worddb, lettercase, capitlcase, &predictor)
       }
 
 
@@ -391,17 +382,7 @@ func commandLoop() {
       case "relearn" : {
         predictor.New()
 
-        accum := float32(0.0)
-        count := 0
-        for _, v := range db.names {
-          for i := 1; i < 6; i++ {
-            accum += predictor.learnWord(v, v, lettercase, capitlcase, &worddb, i, 0.05)
-            count++
-            if count % 250 == 1 {
-              fmt.Println("Average error:", (accum / float32(count)))
-            }
-          }
-        }
+        fullLearnPass(&db, &worddb, lettercase, capitlcase, &predictor)
       }
 
 
@@ -461,5 +442,28 @@ func commandLoop() {
 
     fmt.Println("")
 
+  }
+}
+
+
+
+
+
+
+
+
+
+
+func fullLearnPass(db, worddb *NameDB, l Case, c Capitalization, predictor *Predictor){
+  accum := float32(0.0)
+  count := 0
+  for _, v := range db.names {
+    for i := 1; i < 6; i++ {
+      accum += predictor.learnWord(v, v, l, c, worddb, i, 0.05)
+      count++
+      if count % 250 == 1 {
+        fmt.Println("Average error:", (accum / float32(count)))
+      }
+    }
   }
 }
