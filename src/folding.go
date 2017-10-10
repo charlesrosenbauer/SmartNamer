@@ -230,3 +230,37 @@ func vectToString (a BitVect) string {
   }
   return str
 }
+
+
+
+
+
+
+
+
+
+
+func measureSimilarity (a, b BitVect) float32 {
+  unionPop := float32(vectPopulation(vectUnion(a, b)))
+  interPop := float32(vectMatch(a, b))
+  if interPop < 1 {
+    interPop = 0.001
+  }
+  return unionPop / interPop
+}
+
+
+
+
+
+
+
+
+
+
+func reduceVect (xs []BitVect, init BitVect, f func(a, b BitVect)BitVect) BitVect {
+  for _, v := range xs {
+    init = f(init, v)
+  }
+  return init
+}

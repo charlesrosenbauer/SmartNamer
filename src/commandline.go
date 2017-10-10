@@ -39,8 +39,8 @@ func printHelpScreen() {
   fmt.Println("set-upper             : Set all ID suggestions to start with an uppercase letter.")
   fmt.Println("set-lower             : Set all ID suggestions to start with a lowercase letter.")
   fmt.Println("get-capitalization    : Check if ID suggestions are set to start with uppercase or lowercase letters.")
-  //fmt.Println("learn                 : Trains neural network for ID prediction. May take a while.")
-  //fmt.Println("relearn               : Resets neural network, then runs implicit learn command.")
+  fmt.Println("learn                 : Trains neural network for ID prediction. May take a while.")
+  fmt.Println("relearn               : Resets neural network, then runs implicit learn command.")
   fmt.Println("predict      [n] [ws] : Takes a list of IDs and a number of words, n (limit 5) and provides suggestions for better replacements consisting of n concatenated words.")
   fmt.Println("?                     : Show Help Screen (You Are Here).")
   fmt.Println("quit                  : Quit the program.")
@@ -371,17 +371,39 @@ func commandLoop() {
       }
 
 
-/*
-      case "learn" : {
 
+      case "learn" : {
+        accum := float32(0.0)
+        count := 0
+        for _, v := range db.names {
+          for i := 1; i < 6; i++ {
+            accum += predictor.learnWord(v, v, lettercase, capitlcase, &worddb, i, 0.05)
+            count++
+            if count % 250 == 1 {
+              fmt.Println("Average error:", (accum / float32(count)))
+            }
+          }
+        }
       }
 
 
 
       case "relearn" : {
+        predictor.New()
 
+        accum := float32(0.0)
+        count := 0
+        for _, v := range db.names {
+          for i := 1; i < 6; i++ {
+            accum += predictor.learnWord(v, v, lettercase, capitlcase, &worddb, i, 0.05)
+            count++
+            if count % 250 == 1 {
+              fmt.Println("Average error:", (accum / float32(count)))
+            }
+          }
+        }
       }
-*/
+
 
 
       case "predict" : {

@@ -168,11 +168,11 @@ func (db *NameDB) findSimilar (comp BitVect, num int) []string {
 
   for i, v := range db.names {
     unionPop := float32(vectPopulation(vectUnion(v, comp)))
-    if unionPop < 1 {
-      unionPop = 0.001  // stop x/0 errors
-    }
     interPop := float32(vectMatch(v, comp))
-    var div float32 = interPop / unionPop
+    if interPop < 1 {
+      interPop = 0.01  // stop x/0 errors
+    }
+    var div float32 = unionPop / interPop
     item := struct{s string; f float32}{i, div}
     list = append(list, item)
   }

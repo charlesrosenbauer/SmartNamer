@@ -5,6 +5,7 @@ package main
 import (
   "math/rand"
   "strings"
+  "math"
 )
 
 
@@ -196,6 +197,78 @@ func (pred *Predictor) predictWords (in BitVect, numwords int, worddb *NameDB) [
 
 
 
+func (pred *Predictor) learnWord (in, out BitVect, c Case, l Capitalization, worddb *NameDB, numwords int, rate float32) float32 {
+
+  // Get Outputs of Predictor
+
+  if numwords < 1 {
+    numwords = 1
+  }else if numwords > 5 {
+    numwords = 5
+  }
+
+  var stdVects [5]BitVect
+  var stdAccum [5]*[256]float32
+  for i := 0; i < numwords; i++ {
+    stdVects[i], stdAccum[i] = pred.standardLayers[i].predict(in)
+  }
+
+  var ctxVects [4]BitVect
+  var ctxAccum [4]*[256]float32
+  for i := 0; i < numwords-1; i++ {
+    ctxVects[i], ctxAccum[i] = pred.contextLayers[i].predict(stdVects[i])
+  }
+
+
+  // Get some string predictions
+
+  var attempts [][]string
+  attempts = append(attempts, (worddb.findSimilar(stdVects[0], 5)))
+  for i := 1; i < numwords; i++ {
+    vects := vectUnion(stdVects[i], ctxVects[i-1])
+    attempts = append(attempts, (worddb.findSimilar(vects, 5)))
+  }
+
+  _, veclist := randomStringBitPredictions(attempts, c, l, 20)
+
+  var minvec []BitVect
+  minflt := float32(math.MaxFloat32)
+  for _, v := range veclist {
+    tmpvect := reduceVect(v, BitVect{[8]uint64{0, 0, 0, 0, 0, 0, 0, 0}}, vectUnion)
+    tmpflt  := measureSimilarity(tmpvect, out)
+    if tmpflt < minflt {
+      minvec = v
+      minflt = tmpflt
+    }
+  }
+
+
+  // Learn based on minvec
+
+  for i, v := range minvec {
+    if i == 0 {
+      stdv := vectIntersection(v, stdVects[i])
+      pred.standardLayers[0].learn(in, stdv, rate, stdAccum[0])
+    }else{
+      stdv := vectIntersection(v, stdVects[i])
+      pred.standardLayers[i].learn(in, stdv, rate, stdAccum[i])
+      ctxv := vectIntersection(v, ctxVects[i-1])
+      pred.standardLayers[i].learn(stdVects[i-1], ctxv, rate, ctxAccum[i-1])
+    }
+  }
+
+  return minflt
+}
+
+
+
+
+
+
+
+
+
+
 func formatConcat (ss []string, c Case, l Capitalization) string {
   ss[0] = strings.ToLower(ss[0])
   for i := 1; i < len(ss); i++ {
@@ -255,4 +328,36 @@ func randomStringPredictions(ss [][]string, c Case, l Capitalization, n int) []s
     ret[i] = formatConcat(outputstr, c, l)
   }
   return ret
+}
+
+
+
+
+
+
+
+
+
+
+func randomStringBitPredictions(ss [][]string, c Case, l Capitalization, n int) ([]string, [][]BitVect) {
+  retStr := make([]string, n)
+  retVec := make([][]BitVect, n)
+  for i, _ := range retStr {
+    // For each ID to be predicted
+
+    var outputstr []string
+    var outputvec []BitVect
+    for _, strs := range ss {
+      // For each collection of collections
+
+      size := len(strs)
+      str  := strs[rand.Int() % size]
+      outputstr = append(outputstr, str)
+      outputvec = append(outputvec, representID(str))
+    }
+
+    retStr[i] = formatConcat(outputstr, c, l)
+    retVec[i] = outputvec
+  }
+  return retStr, retVec
 }
