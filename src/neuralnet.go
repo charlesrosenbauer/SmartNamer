@@ -361,3 +361,19 @@ func randomStringBitPredictions(ss [][]string, c Case, l Capitalization, n int) 
   }
   return retStr, retVec
 }
+
+
+
+
+
+
+
+
+
+
+func errorMetric (unionPop, interPop float32) float32 {
+  if interPop == 0 {
+    interPop = 0.01
+  }
+  return unionPop / interPop
+}

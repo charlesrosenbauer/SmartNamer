@@ -112,7 +112,7 @@ func representID (id string) BitVect {
 func representPosition (filename string, pos int, vect BitVect) BitVect {
   h := sha1.New()
   io.WriteString(h, filename)
-  io.WriteString(h, strconv.Itoa(pos / 100))
+  io.WriteString(h, strconv.Itoa(pos / 30))
   bytes := h.Sum(nil)
   var a uint = uint((bytes[0] / 64) % 4)
   var b uint = uint( bytes[0] % 64)
@@ -243,10 +243,7 @@ func vectToString (a BitVect) string {
 func measureSimilarity (a, b BitVect) float32 {
   unionPop := float32(vectPopulation(vectUnion(a, b)))
   interPop := float32(vectMatch(a, b))
-  if interPop < 1 {
-    interPop = 0.01
-  }
-  return unionPop / interPop
+  return errorMetric(unionPop, interPop)
 }
 
 
